@@ -21,7 +21,7 @@
             left: 5px;
         }
 
-        .soundDropDownBtn {
+        #soundDropDownBtn {
             position: absolute;
             top: 80px;
             left: 5px;
@@ -32,7 +32,7 @@
             border: none;
         }
 
-        .dropdown-content {
+        #dropdown-content {
             display: none;
             position: absolute;
             top: 128px;
@@ -42,7 +42,7 @@
             z-index: 1;
         }
 
-        .dropdown-content a {
+        #dropdown-content a {
             color: black;
             padding: 12px 16px;
             text-decoration: none;
@@ -50,17 +50,12 @@
         }
 
         /* Change color of dropdown links on hover */
-        .dropdown-content a:hover {
+        #dropdown-content a:hover {
             background-color: #ddd;
         }
 
-        /* Show the dropdown menu on hover */
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
         /* Change the background color of the dropdown button when the dropdown content is shown */
-        .dropdown:hover .soundDropDownBtn {
+        .dropdown:hover #soundDropDownBtn {
             background-color: #3e8e41;
         }
 
@@ -95,45 +90,90 @@
         #createNewTimer:hover #createNewTimerButton {
             background-color: #c39200;
         }
+
         #timerDisplay {
-            position:absolute;
+            position: absolute;
             top: 220px;
             left: 5px;
             border-style: solid;
             border-width: 2px;
 
         }
+
+        #timerAlert {
+            position: absolute;
+            left: 150px;
+            top: 100px;
+            border-style: solid;
+            border-width: 2px;
+            height: 200px;
+            width: 200px;
+            background-color: white;
+            z-index: 1;
+            display: none;
+        }
+
+        #alertMsg {
+            text-align: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 25px;
+        }
+
+        #acceptBtn {
+            position: absolute;
+            top: 100px;
+            left: 50px;
+            width: 100px;
+            height: 50px;
+            text-align: center;
+            background-color: #04AA6D;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+        }
+        #acceptBtnHover:hover #acceptBtn {
+            background-color: #3e8e41;
+        }
     </style>
 </head>
 
 <body>
-    <div id="timerManager">
-        <p id="timerMngHeading"> Timer Settings </p>
-        <div class="dropdown">
-            <button class="soundDropDownBtn"> Select Sound </button>
-            <div class="dropdown-content">
-                <a href="#">Radar</a>
-                <a href="#">sound2</a>
-                <a href="#">sound3</a>
+    <div id="all">
+        <div id="timerManager">
+            <p id="timerMngHeading"> Timer Settings </p>
+            <div class="dropdown">
+                <button id="soundDropDownBtn"> Select Sound </button>
+                <div id="dropdown-content">
+                    <a href="#" id="selectRadar"> Radar </a>
+                    <a href="#" id="selectRadial"> Radial </a>
+                    <a href="#" id="selectBugatti"> Bugatti </a>
+                </div>
+            </div>
+            <div id="timerLengthInputDisplay">
+                <form id="timerLengthInput">
+                    <label for="timerLength">Timer Length (s):</label><br>
+                    <input type="text" id="timerLength" name="timerLength"><br>
+                </form>
+            </div>
+            <div id="timerNameInputDisplay">
+                <form id="timerNameInput">
+                    <label for="timerName">Timer Name:</label><br>
+                    <input type="text" id="timerName" name="timerName"><br>
+                </form>
+            </div>
+            <div id="createNewTimer">
+                <button id="createNewTimerButton"> Create New Timer </button>
             </div>
         </div>
-        <div id="timerLengthInputDisplay">
-            <form id="timerLengthInput">
-                <label for="timerLength">Timer Length (s):</label><br>
-                <input type="text" id="timerLength" name="timerLength"><br>
-            </form>
-        </div>
-        <div id="timerNameInputDisplay">
-            <form id="timerNameInput">
-                <label for="timerName">Timer Name:</label><br>
-                <input type="text" id="timerName" name="timerName"><br>
-            </form>
-        </div>
-        <div id="createNewTimer">
-            <button id="createNewTimerButton"> Create New Timer </button>
+        <canvas id="timerDisplay" height="250" width="500"> </canvas>
+        <div id="timerAlert">
+            <p id="alertMsg"> yo </p>
+            <div id="acceptBtnHover">
+            <button id="acceptBtn"> OK </button>
+            </div>
         </div>
     </div>
-    <canvas id="timerDisplay" height="250" width="500"> </canvas>
 </body>
 
 </html>
@@ -141,14 +181,14 @@
     const canvas = document.getElementById("timerDisplay");
     const ctx = canvas.getContext("2d");
 
-    var SOUNDS = {
-        RADAR: 1,
-    }
+    var alertBox = document.getElementById('timerAlert');
+    var acceptPrompt = false;
 
-    var timerSound = SOUNDS.RADAR;
+    var timerSound = new Audio('radar.mp3');
     var timerLength = "";
     var timerName = "";
     var timers = [];
+    var currentSound;
 
     document.getElementById('createNewTimerButton').addEventListener("click", createNewTimer);
 
@@ -166,7 +206,7 @@
                 timeLeft: timerLength,
                 sound: timerSound,
             })
-            
+
         } else {
             alert("Please enter a valid number for Timer Length.");
         }
@@ -174,20 +214,70 @@
     timerInterval = setInterval(countdown, 100);
 
     function countdown() {
-        var xPos = 5;
-        var yPos = 15;
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        if (acceptPrompt == false) {
+            var xPos = 5;
+            var yPos = 15;
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-        for (var i = 0; i < timers.length; i++) {
-            timers[i].timeLeft = timers[i].timeLeft - 0.1;
-            var displayText = timers[i].name + ": " + Math.round(timers[i].timeLeft * 100 ) / 100 + "s";
-            ctx.font = "15px Arial";
-            ctx.fillText(displayText, xPos, yPos);
-            yPos += 20;
-            if (timers[i].timeLeft <= 0) {
-                alert(timers[i].name);
-                timers.splice(i, 1);
+            for (var i = 0; i < timers.length; i++) {
+                timers[i].timeLeft = timers[i].timeLeft - 0.1;
+                var displayText = timers[i].name + ": " + Math.round(timers[i].timeLeft * 100) / 100 + "s";
+                ctx.font = "15px Arial";
+                ctx.fillText(displayText, xPos, yPos);
+                yPos += 20;
+                if (timers[i].timeLeft <= 0) {
+                    document.getElementById("alertMsg").innerHTML = timers[i].name;
+                    currentSound = timers[i].sound;
+                    currentSound.play();
+                    timers.splice(i, 1);
+                    acceptPrompt = true;
+                    alertBox.style.display = "block";
+                }
             }
         }
+    }
+
+    document.getElementById('selectRadar').addEventListener("click", selectRadar);
+    document.getElementById('selectRadial').addEventListener("click", selectRadial);
+    document.getElementById('selectBugatti').addEventListener("click", selectBugatti);
+    document.getElementById('soundDropDownBtn').addEventListener("click", toggleDropDownMenu);
+    document.getElementById('timerLength').addEventListener("click", hideDropDownMenu);
+    document.getElementById('timerName').addEventListener("click", hideDropDownMenu);
+    document.getElementById('createNewTimerButton').addEventListener("click", hideDropDownMenu);
+
+    function toggleDropDownMenu() {
+        if (document.getElementById('dropdown-content').style.display == "block") {
+            document.getElementById('dropdown-content').style.display = "none";
+        } else {
+            document.getElementById('dropdown-content').style.display = "block";
+        }
+    }
+
+    function hideDropDownMenu() {
+        document.getElementById('dropdown-content').style.display = "none";
+    }
+
+    function selectRadar() {
+        hideDropDownMenu();
+        timerSound = new Audio('radar.mp3');
+    }
+
+    function selectRadial() {
+        hideDropDownMenu();
+        timerSound = new Audio('radial.mp3');
+    }
+
+    function selectBugatti() {
+        hideDropDownMenu();
+        timerSound = new Audio('bugatti.mp3');
+    }
+
+    document.getElementById('acceptBtn').addEventListener("click", acceptTimerMsg);
+
+    function acceptTimerMsg() {
+        alertBox.style.display = "none";
+        currentSound.pause();
+        currentSound.currentTime = 0;
+        acceptPrompt = false;
     }
 </script>
