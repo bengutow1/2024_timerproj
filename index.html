@@ -1,9 +1,80 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
 
-    </head>
-    <body>
-        <p> sup </p>
-    </body>
+<head>
+    <style>
+        #timerManager {
+            height: 200px;
+            width: 500px;
+            border-width: 2;
+            border-style: solid;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+        }
+
+        #timerMngHeading {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 40px;
+            position: absolute;
+            top: -40px;
+            left: 5px;
+        }
+
+        .soundDropDownBtn {
+            position:absolute;
+            top: 170px;
+            left: 5px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .soundDropDownBtn {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="timerManager">
+        <p id="timerMngHeading"> Create New Timer </p>
+        <div class="dropdown">
+            <button class="soundDropDownBtn"> Select Sound </button>
+            <div class="dropdown-content">
+                <a href="#">Radar</a>
+                <a href="#">sound2</a>
+                <a href="#">sound3</a>
+            </div>
+        </div>
+    </div>
+</body>
+
 </html>
+<script>
+
+</script>
