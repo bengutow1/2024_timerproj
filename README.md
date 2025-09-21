@@ -18,7 +18,7 @@ start index.html
 * You can also double click index.html on most OSs to open it.
 
 ## Live Demo Link:
-[Try it here!](https://bengutow1.github.io/timerproj_for_hackathon/)
+[Try it here!](https://bengutow1.github.io/2024_timerproj/)
 
 ## Features:
 * Can create as many timers as you want
